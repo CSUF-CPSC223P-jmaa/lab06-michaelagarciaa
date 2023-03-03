@@ -65,12 +65,14 @@ def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
     "*** YOUR CODE HERE ***"
+    return ['planet', mass]
 
 
 def mass(w):
     """Select the mass of a planet."""
     assert is_planet(w), 'must call mass on a planet'
-    "*** YOUR CODE HERE ***"
+    "*** YOUR CODE HERE ***"    
+    return w[1]
 
 
 def is_planet(w):
@@ -127,7 +129,13 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return True 
 
+    if length(left(m)) * total_weight(end(left(m))) != length(right(m)) * total_weight(end(right(m))):
+        return False
+
+    return balanced(end(left)) and balanced(end(right))
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -160,6 +168,8 @@ def totals_tree(m):
     """
     "*** YOUR CODE HERE ***"
 
+    l, r = left(m), right(m)
+    return tree(total_weight(m), [totals_tree(end(l)), totals_tree(end(r))])
 
 def replace_loki_at_leaf(t, lokis_replacement):
     """Returns a new tree where every leaf value equal to "loki" has
@@ -191,7 +201,12 @@ def replace_loki_at_leaf(t, lokis_replacement):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t):
+        if label(t) == 'loki':
+            return tree(lokis_replacement)
+        return t
+    else:
+        return tree(label(t), [print_tree(a, 'loki', lokis_replacement) for a in branches(t)])
 
 def has_path(t, word):
     """Return whether there is a path in a tree where the entries along the path
