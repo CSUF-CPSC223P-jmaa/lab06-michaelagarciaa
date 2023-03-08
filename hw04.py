@@ -129,13 +129,15 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
-    if is_planet(m):
+    if not is_mobile(m):
         return True 
 
-    if length(left(m)) * total_weight(end(left(m))) != length(right(m)) * total_weight(end(right(m))):
-        return False
-
-    return balanced(end(left)) and balanced(end(right))
+    else:
+        Left, Right = left(m), right(m)
+        Left_e, Right_e = end(Left), end(Right)
+        left_t = length(Left) * total_weight(Left_e)
+        right_t = length(Right) * total_weight(Right_e)
+        return balanced(Left_e) and balanced(Right_e) and left_t == right_t 
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -168,8 +170,13 @@ def totals_tree(m):
     """
     "*** YOUR CODE HERE ***"
 
-    l, r = left(m), right(m)
-    return tree(total_weight(m), [totals_tree(end(l)), totals_tree(end(r))])
+    if is_planet(m):
+        return tree(total_weight(m))
+    else:
+        l, r = left(m), right(m)
+        l_end , r_end = end(l), end(r)
+        l_tree, r_tree = totals_tree(l_end), totals_tree(r_end)
+        return tree(total_weight(m), [l_tree,r_tree])
 
 def replace_loki_at_leaf(t, lokis_replacement):
     """Returns a new tree where every leaf value equal to "loki" has
@@ -201,12 +208,11 @@ def replace_loki_at_leaf(t, lokis_replacement):
     True
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t):
-        if label(t) == 'loki':
+    if is_leaf(t) and label(t) == 'loki':
             return tree(lokis_replacement)
-        return t
     else:
-        return tree(label(t), [print_tree(a, 'loki', lokis_replacement) for a in branches(t)])
+        lr = [replace_loki_at_leaf (b, lokis_replacement) for b in branches(t)] 
+        return tree(label(t), lr)
 
 def has_path(t, word):
     """Return whether there is a path in a tree where the entries along the path
